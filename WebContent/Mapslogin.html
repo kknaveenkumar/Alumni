@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Map</title>
+<style>
+	html, body, #map_canvas { margin: 0; padding: 0; height: 100%; }
+      
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?sensor=false&libraries=visualization"></script>
+    <script>
+      function initialize() {
+        
+        var map_options = {
+          center: new google.maps.LatLng(21.0000, 78.0000),
+          zoom: 4,
+          mapTypeId: google.maps.MapTypeId.TERRAIN
+        }
+        //var map = new google.maps.Map(document.getElementById('map_canvas'),mapOptions);
+
+        var map = new google.maps.Map(map_canvas, map_options)
+        var script = document.createElement('script');
+        // (In this example we use a locally stored copy instead.)
+        //script.src = 'http://earthquake.usgs.gov/earthquakes/feed/geojsonp/2.5/week';
+        script.src = 'map.geojson';
+        document.getElementsByTagName('head')[0].appendChild(script);
+      }
+      //google.maps.event.addDomListener(window, 'load', initialize);
+      window.eqfeed_callback = function(results) {
+          for (var i = 0; i < results.features.length; i++) {
+            var coords = results.features[i].geometry.coordinates;
+            var latLng = new google.maps.LatLng(coords[1],coords[0]);
+            var marker = new google.maps.Marker({
+              position: latLng,
+              map: map
+            });
+          }
+        }
+      
+    </script>
+</head>
+<body onload="initialize()">
+    <div id="map_canvas"></div>
+  </body>
+</html>
